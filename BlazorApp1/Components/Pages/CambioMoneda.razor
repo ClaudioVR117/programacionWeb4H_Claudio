@@ -1,0 +1,79 @@
+﻿@page "/cambiomoneda"
+@* Paso 1: Asegurar la interactividad (Solo si usas .NET 8 o superior) *@
+@rendermode InteractiveServer
+
+<div class="container py-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-5">
+            <h1 class="mb-4">Cambio de moneda</h1>
+
+            <div class="row align-items-center mb-3">
+                <div class="col-md-2">
+                    <label class="form-label mb-0">Pesos</label>
+                </div>
+                <div class="col-md-10">
+                    @* Paso 2: Usamos @bind-value para asegurar la sincronización *@
+                    <input type="number" class="form-control" @bind-value="pesosMexicanos" placeholder="0" />
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-10 offset-md-2">
+                    @* Paso 3: Cambiamos el tipo a button para evitar que refresque la página *@
+                    <button type="button" class="btn btn-primary px-4" @onclick="CalcularCambio">Convertir</button>
+                </div>
+            </div>
+
+            <div class="row align-items-center mb-3">
+                <div class="col-md-2">
+                    <label class="form-label mb-0 text-muted">Dólares</label>
+                </div>
+                <div class="col-md-10">
+                    <input type="text" class="form-control bg-light" value="@dolares.ToString("N2")" readonly />
+                </div>
+            </div>
+
+            <div class="row align-items-center mb-3">
+                <div class="col-md-2">
+                    <label class="form-label mb-0 text-muted">Euros</label>
+                </div>
+                <div class="col-md-10">
+                    <input type="text" class="form-control bg-light" value="@euros.ToString("N2")" readonly />
+                </div>
+            </div>
+
+            <div class="row align-items-center mb-3">
+                <div class="col-md-2">
+                    <label class="form-label mb-0 text-muted">Libras</label>
+                </div>
+                <div class="col-md-10">
+                    <input type="text" class="form-control bg-light" value="@libras.ToString("N2")" readonly />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private double pesosMexicanos;
+    private double dolares;
+    private double euros;
+    private double libras;
+
+    private double tasaDolar = 17.10;
+    private double tasaEuro = 18.50;
+    private double tasaLibra = 21.60;
+
+    private void CalcularCambio()
+    {
+        // Agregamos un Console.WriteLine para que puedas ver en la consola de VS si entra aquí
+        System.Diagnostics.Debug.WriteLine("Botón presionado con valor: " + pesosMexicanos);
+
+        if (pesosMexicanos > 0)
+        {
+            dolares = pesosMexicanos / tasaDolar;
+            euros = pesosMexicanos / tasaEuro;
+            libras = pesosMexicanos / tasaLibra;
+        }
+    }
+}
