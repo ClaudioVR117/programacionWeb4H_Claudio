@@ -1,0 +1,100 @@
+﻿<h3>Dias del mes</h3>
+
+@page "/diasdelmes"
+@rendermode InteractiveServer
+
+<div class="container py-4">
+    <div class="card shadow-sm p-4" style="max-width: 600px;">
+        <h2 class="mb-4">Conocer los días del mes</h2>
+
+        <div class="row mb-3">
+            <div class="col-md-2">
+                <label>Mes</label>
+            </div>
+            <div class="col-md-10">
+                <input type="number" class="form-control" @bind="mes" placeholder="Ej. 2" />
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-2">
+                <label>Año</label>
+            </div>
+            <div class="col-md-10">
+                <input type="number" class="form-control" @bind="anio" placeholder="Ej. 2000" />
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-10 offset-md-2">
+                <button class="btn btn-primary" @onclick="MostrarNumeroDias">Calcular</button>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(mensajeResultado))
+        {
+            <h3 class="mt-3">@mensajeResultado</h3>
+        }
+    </div>
+</div>
+
+@code {
+    // Variables para guardar lo que el usuario escribe
+    private int mes;
+    private int anio;
+    private string mensajeResultado = "";
+
+    // Variables para los cálculos
+    private int dias;
+    private bool esBisiesto = false;
+
+    private void MostrarNumeroDias()
+    {
+        // 1. Determinar si el año es bisiesto (según las reglas de la instrucción)
+        // Un año es bisiesto si es múltiplo de 4 y NO de 100, O si es múltiplo de 400
+        if ((anio % 4 == 0 && anio % 100 != 0) || (anio % 400 == 0))
+        {
+            esBisiesto = true;
+        }
+        else
+        {
+            esBisiesto = false;
+        }
+
+        // 2. Determinar los días del mes usando lógica simple de IF
+        if (mes == 1 || mes == 3 || mes == 5 || mes == 7 || mes == 8 || mes == 10 || mes == 12)
+        {
+            dias = 31;
+        }
+        else if (mes == 4 || mes == 6 || mes == 9 || mes == 11)
+        {
+            dias = 30;
+        }
+        else if (mes == 2)
+        {
+            if (esBisiesto == true)
+            {
+                dias = 29;
+            }
+            else
+            {
+                dias = 28;
+            }
+        }
+        else
+        {
+            // Por si ponen un mes que no existe (ej. 13)
+            dias = 0;
+        }
+
+        // 3. Armar el mensaje final
+        if (dias > 0)
+        {
+            mensajeResultado = "El mes " + mes + " del año " + anio + " tiene " + dias + " días";
+        }
+        else
+        {
+            mensajeResultado = "Por favor, ingresa un mes válido (1-12)";
+        }
+    }
+}
