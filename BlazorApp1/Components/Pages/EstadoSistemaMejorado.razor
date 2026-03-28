@@ -1,0 +1,19 @@
+﻿@* <h3>EstadoSistemaMejorado</h3>
+
+@code {
+    [Parameter]
+    public int CodigoEstado { get; set; }
+    private string _class = "alert alert-dark";
+
+    protected override void OnParametersSet()
+    {
+        switch (CodigoEstado)
+        {
+            case 200:
+                _class = "alert alert-success";
+                _letrero = "Sistema Operacional
+                break;
+
+        }
+    }
+} *@

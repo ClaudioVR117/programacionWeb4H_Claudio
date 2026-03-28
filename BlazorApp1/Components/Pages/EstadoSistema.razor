@@ -1,0 +1,36 @@
+﻿@page "/estadosistema"
+
+<h3>Estado sistema</h3>
+
+@if (CodigoEstado == 200)
+{
+    <div class="alert alert-success">
+        <p>Sistema Operacional</p>
+    </div>
+}
+
+else if (CodigoEstado == 404)
+{
+    <div class="alert alert-warning">
+        <p>Recurso No Encontrado</p>
+    </div>
+}
+
+else if (CodigoEstado == 500)
+{
+    <div class="alert alert-danger">
+        <p>Error Interno del Servidor</p>
+    </div>
+}
+
+else
+{
+    <div class="alert alert-dark">
+        <p>Estado desconocido</p>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int CodigoEstado { get; set; }
+}
