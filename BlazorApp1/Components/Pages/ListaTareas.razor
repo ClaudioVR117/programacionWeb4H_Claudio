@@ -1,0 +1,60 @@
+﻿@page "/listatareas"
+@rendermode InteractiveServer
+
+<div class="container py-4">
+    <div class="card shadow-sm p-4" style="max-width: 500px;">
+        <h2 class="mb-4 text-primary">Lista de Actividades</h2>
+
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" @bind="nuevaActividad" placeholder="Escribe una tarea..." />
+            <button class="btn btn-success" @onclick="AgregarTarea">Agregar</button>
+        </div>
+
+        <hr />
+
+        <h5 class="mb-3">Actividades por realizar:</h5>
+        
+        @if (misActividades.Count == 0)
+        {
+            <p class="text-muted">No hay actividades pendientes.</p>
+        }
+        else
+        {
+            <ul class="list-group">
+                @foreach (var tarea in misActividades)
+                {
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        @tarea
+                        <button class="btn btn-danger btn-sm" @onclick="() => EliminarTarea(tarea)">
+                            Eliminar
+                        </button>
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+</div>
+
+@code {
+    // Variable para el texto de la nueva tarea
+    private string nuevaActividad = "";
+
+    // Colección para guardar las tareas
+    private List<string> misActividades = new List<string>();
+
+    private void AgregarTarea()
+    {
+        // Solo agregamos si el texto no está vacío
+        if (!string.IsNullOrWhiteSpace(nuevaActividad))
+        {
+            misActividades.Add(nuevaActividad);
+            nuevaActividad = ""; // Limpiamos el cuadro de texto
+        }
+    }
+
+    private void EliminarTarea(string tareaABorrar)
+    {
+        // Eliminamos la tarea específica de la colección
+        misActividades.Remove(tareaABorrar);
+    }
+}
