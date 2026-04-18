@@ -1,0 +1,72 @@
+﻿@page "/numerosprimos"
+@rendermode InteractiveServer
+
+<div class="container py-4">
+    <div class="card shadow-sm p-4" style="max-width: 600px;">
+        <h2 class="mb-4">Generador de Números Primos</h2>
+
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label>Escribe un número:</label>
+            </div>
+            <div class="col-md-8">
+                <input type="number" class="form-control" @bind="numeroUsuario" placeholder="Ej. 20" />
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-8 offset-md-4">
+                <button class="btn btn-primary" @onclick="GenerarListaPrimos">Generar primos</button>
+            </div>
+        </div>
+
+        @if (listaPrimos.Count > 0)
+        {
+            <div class="alert alert-info">
+                <h4>Primos encontrados:</h4>
+                <p>@string.Join(", ", listaPrimos)</p>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private int numeroUsuario;
+    private List<int> listaPrimos = new List<int>();
+
+    private void GenerarListaPrimos()
+    {
+        // Limpiamos la lista anterior para que no se amontonen
+        listaPrimos.Clear();
+
+        // Un número primo debe ser mayor que 1
+        if (numeroUsuario < 2)
+        {
+            return;
+        }
+
+        // Revisamos cada número desde el 2 hasta el número que escribió el usuario
+        for (int i = 2; i <= numeroUsuario; i++)
+        {
+            if (EsPrimo(i))
+            {
+                listaPrimos.Add(i);
+            }
+        }
+    }
+
+    // Esta función revisa si un número individual es primo o no
+    private bool EsPrimo(int n)
+    {
+        // Un número es primo si solo se puede dividir entre 1 y entre sí mismo.
+        // Si encontramos que se puede dividir entre cualquier otro número, NO es primo.
+        for (int divisor = 2; divisor < n; divisor++)
+        {
+            if (n % divisor == 0)
+            {
+                return false; // Se pudo dividir, entonces no es primo
+            }
+        }
+        return true; // Si terminó el ciclo y no se pudo dividir con nadie, es primo
+    }
+}
