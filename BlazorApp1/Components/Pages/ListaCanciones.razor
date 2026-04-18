@@ -1,0 +1,116 @@
+﻿@page "/listacanciones"
+@rendermode InteractiveServer
+
+<div class="container py-4">
+    <div class="card shadow-sm p-4" style="max-width: 700px;">
+        <h2 class="mb-4 text-danger">Administrador de Canciones</h2>
+
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" @bind="cancionTemporal" placeholder="Nombre de la canción..." />
+            @if (editando)
+            {
+                <button class="btn btn-warning" @onclick="GuardarEdicion">Guardar Cambios</button>
+            }
+            else
+            {
+                <button class="btn btn-success" @onclick="AgregarCancion">Agregar</button>
+            }
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <input type="text" class="form-control" @oninput="FiltrarCanciones" placeholder="Buscar canción (ej. summer)..." />
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-outline-secondary w-100" @onclick="OrdenarAsc">A-Z</button>
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-outline-secondary w-100" @onclick="OrdenarDesc">Z-A</button>
+            </div>
+        </div>
+
+        <hr />
+
+        <ul class="list-group">
+            @foreach (var cancion in cancionesMostradas)
+            {
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    @cancion
+                    <div>
+                        <button class="btn btn-sm btn-info me-2" @onclick="() => IniciarEdicion(cancion)">Editar</button>
+                        <button class="btn btn-sm btn-danger" @onclick="() => EliminarCancion(cancion)">Eliminar</button>
+                    </div>
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+
+@code {
+    private List<string> todasLasCanciones = new List<string>();
+    private List<string> cancionesMostradas = new List<string>();
+    private string cancionTemporal = "";
+    private string cancionOriginal = ""; // Para saber cuál estamos editando
+    private bool editando = false;
+
+    private void AgregarCancion()
+    {
+        if (!string.IsNullOrWhiteSpace(cancionTemporal))
+        {
+            todasLasCanciones.Add(cancionTemporal);
+            cancionTemporal = "";
+            ActualizarVista();
+        }
+    }
+
+    private void EliminarCancion(string cancion)
+    {
+        todasLasCanciones.Remove(cancion);
+        ActualizarVista();
+    }
+
+    private void IniciarEdicion(string cancion)
+    {
+        cancionTemporal = cancion;
+        cancionOriginal = cancion;
+        editando = true;
+    }
+
+    private void GuardarEdicion()
+    {
+        int indice = todasLasCanciones.IndexOf(cancionOriginal);
+        if (indice != -1 && !string.IsNullOrWhiteSpace(cancionTemporal))
+        {
+            todasLasCanciones[indice] = cancionTemporal;
+            cancionTemporal = "";
+            editando = false;
+            ActualizarVista();
+        }
+    }
+
+    private void FiltrarCanciones(ChangeEventArgs e)
+    {
+        string busqueda = e.Value.ToString().ToLower();
+        cancionesMostradas = todasLasCanciones
+            .Where(c => c.ToLower().Contains(busqueda))
+            .ToList();
+    }
+
+    private void OrdenarAsc()
+    {
+        todasLasCanciones.Sort();
+        ActualizarVista();
+    }
+
+    private void OrdenarDesc()
+    {
+        todasLasCanciones.Sort();
+        todasLasCanciones.Reverse();
+        ActualizarVista();
+    }
+
+    private void ActualizarVista()
+    {
+        cancionesMostradas = new List<string>(todasLasCanciones);
+    }
+}
