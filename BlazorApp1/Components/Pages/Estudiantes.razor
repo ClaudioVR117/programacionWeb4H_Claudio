@@ -1,0 +1,109 @@
+﻿@page "/estudiantes"
+@using BlazorApp1.Models
+@rendermode InteractiveServer
+
+<PageTitle>Estudiantes</PageTitle>
+
+<div class="container mt-4">
+    <h3>Estudiantes</h3>
+
+    <div class="card p-3 shadow-sm" style="max-width: 500px;">
+        <div class="mb-3">
+            <label class="form-label">Nombre</label>
+            <input type="text" class="form-control" @bind="nuevoEst.Nombre" />
+            @if (intentado && string.IsNullOrWhiteSpace(nuevoEst.Nombre))
+            {
+                <span class="text-danger small">El Nombre no debe ser vacío</span>
+            }
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Correo</label>
+            <input type="email" class="form-control" @bind="nuevoEst.Correo" />
+            @if (intentado && (string.IsNullOrWhiteSpace(nuevoEst.Correo) || !nuevoEst.Correo.Contains("@")))
+            {
+                <span class="text-danger small">El Correo no debe ser vacío y debe ser válido</span>
+            }
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Calificación</label>
+            <input type="number" class="form-control" @bind="nuevoEst.Calificacion" step="0.1" />
+            @if (intentado && (nuevoEst.Calificacion < 0 || nuevoEst.Calificacion > 10))
+            {
+                <span class="text-danger small">La calificación debe ser de 0 a 10</span>
+            }
+        </div>
+
+        <button class="btn btn-primary" @onclick="Guardar">Guardar</button>
+    </div>
+
+    <hr />
+
+    @if (listaEstudiantes.Count > 0)
+    {
+        <table class="table table-striped mt-4">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Calificación</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var e in listaEstudiantes)
+                {
+                    <tr>
+                        <td>@e.Nombre</td>
+                        <td>@e.Correo</td>
+                        <td>@e.Calificacion</td>
+                        <td>
+                            <button class="btn btn-danger btn-sm" @onclick="() => Eliminar(e)">🗑️</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+@code {
+    // La lista (colección) de objetos tipo Estudiante
+    private List<Estudiante> listaEstudiantes = new List<Estudiante>();
+    
+    // Objeto temporal para el formulario
+    private Estudiante nuevoEst = new Estudiante();
+    
+    private bool intentado = false;
+
+    private void Guardar()
+    {
+        intentado = true;
+
+        // Validaciones del PDF
+        if (!string.IsNullOrWhiteSpace(nuevoEst.Nombre) &&
+            !string.IsNullOrWhiteSpace(nuevoEst.Correo) &&
+            nuevoEst.Correo.Contains("@") &&
+            nuevoEst.Calificacion >= 0 &&
+            nuevoEst.Calificacion <= 10)
+        {
+            // Agregamos a la colección (List)
+            listaEstudiantes.Add(new Estudiante
+            {
+                Nombre = nuevoEst.Nombre,
+                Correo = nuevoEst.Correo,
+                Calificacion = nuevoEst.Calificacion
+            });
+
+            // Limpiamos
+            nuevoEst = new Estudiante();
+            intentado = false;
+        }
+    }
+
+    private void Eliminar(Estudiante e)
+    {
+        listaEstudiantes.Remove(e);
+    }
+}
